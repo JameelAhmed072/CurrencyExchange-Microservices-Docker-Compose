@@ -1,0 +1,6 @@
+#spring:
+#  data:
+#    mongodb:
+#      database: Currency
+#      host: enggadda
+#      port: 27017

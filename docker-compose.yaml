@@ -1,0 +1,83 @@
+version: "3.7"
+services:
+
+  registry-service:
+    build: currencyexchangediscovery
+    image: registry-service:latest
+    container_name: registry-service
+    environment:
+      EUREKA_URI: http://eureka-server:8761/eureka
+    ports:
+      - "8761:8761"
+    restart: always
+    networks:
+      currency-network:
+        aliases:
+          - registry-server
+
+  mongo:
+    image: mongo
+    container_name: mongodb
+    volumes:
+      - mongovolume:/data/db
+    ports:
+      - "27017:27017"
+    restart: always
+    networks:
+      currency-network:
+        aliases:
+          - enggadda
+
+  currency-exchange:
+    build: currencyexchange
+    image: currency-exchange:latest
+    container_name: currency-exchange
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/currencyexchangedb
+      EUREKA_URI: http://registry-service:8761/eureka
+    ports:
+      - "9091:9091"
+    restart: always
+    depends_on:
+      - registry-service
+      - mongo
+    networks:
+      - currency-network
+
+  currency-conversion:
+    build: currencyconversion
+    image: currency-conversion:latest
+    container_name: currency-conversion
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/currencyconversiondb
+      EUREKA_URI: http://registry-service:8761/eureka/
+    ports:
+      - "9092:9092"
+    depends_on:
+      - registry-service
+      - mongo
+    networks:
+      - currency-network
+
+  api-gateway:
+    build: currencyexchangegateway
+    image: currencygateway:latest
+    container_name: currencyexchangegateway
+    environment:
+      EUREKA_URI: http://registry-service:8761/eureka
+    ports:
+      - "9090:9090"
+    restart: always
+    depends_on:
+      - registry-service
+    networks:
+      currency-network:
+        aliases:
+          - currencyexchange-gateway
+
+volumes:
+  dbvolume:
+  mongovolume:
+networks:
+  currency-network:
+    driver: bridge

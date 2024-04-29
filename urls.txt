@@ -1,0 +1,19 @@
+Currency Exchange Service
+http://localhost:9091/currency-exchange/from/USD/to/PKR
+
+Currency Conversion
+http://localhost:9092/currency-conversion-feign/from/USD/to/PKR/quantity/10
+
+
+Eureka
+http://localhost:8761/eureka/
+
+Api gateway
+http://localhost:9090/
+
+
+use these endpoints when using the apigateway
+http://localhost:9090/CURRENCY-CONVERSION/currency-conversion-feign/from/USD/to/PKR/quantity/10
+    http://localhost:9090/CURRENCY-EXCHANGE/currency-exchange/from/USD/to/PKR
+
+
